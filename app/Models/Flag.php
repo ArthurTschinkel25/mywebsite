@@ -8,6 +8,7 @@ class Flag
 
   public $bandeiraPng;
   public $dificuldade;
+
   public function  __construct($nome, $bandeiraPng, $dificuldade){
 
       $this->nome = $nome;

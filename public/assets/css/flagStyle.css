@@ -1,14 +1,13 @@
 body {
-    background: linear-gradient(to bottom, rgba(5, 4, 43, 0.8), rgba(2, 0, 21, 0.9));
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     background-size: cover;
     display: flex;
     flex-direction: column;
     min-height: 100vh; /* aqui! */
     margin: 0;
     padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-family: "Poppins", sans-serif;
-    font-weight: 500;
+    font-family: "Pixelify Sans", sans-serif;
+    font-optical-sizing: auto;
     font-style: normal;
 }
 .container-dificuldades {
@@ -43,4 +42,148 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+.flag{
+    width: 200px;
+    height: 120px;
+    border-radius: 7px;
+    transition: transform 0.4s, box-shadow 0.4s;
+}
+.flag:hover{
+    transform: scale(1.08);
+}
+.cards-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    perspective: 1000px;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.card {
+    position: relative;
+    height: 320px;
+    border-radius: 16px;
+    background: rgba(30, 41, 59, 0.7); /* Cor base com transparência */
+    border: 1px solid rgba(99, 102, 241, 0.3); /* Borda sutil roxa */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transform-style: preserve-3d;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+            circle at var(--x, 50%) var(--y, 50%),
+            rgba(124, 58, 237, 0.2) 0%, /* Gradiente roxo */
+            transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
+    border-color: rgba(99, 102, 241, 0.5);
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card-content {
+    position: relative;
+    height: 100%;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+    color: white;
+}
+
+.card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    transform: translateZ(20px);
+    background: linear-gradient(
+            to right,
+            #a78bfa, /* Roxo claro */
+            #c4b5fd  /* Roxo mais claro */
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    transform: translateZ(20px);
+    background: linear-gradient(
+            to right,
+            #c5b4f4, /* Roxo claro */ #c1bcd3 /* Roxo mais claro */
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.card p {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    opacity: 0.8;
+    transform: translateZ(15px);
+    color: #e2e8f0; /* Cinza claro para melhor legibilidade */
+}
+
+.card-footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transform: translateZ(15px);
+}
+
+.card-button {
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(to right, #7c3aed, #6d28d9); /* Gradiente roxo */
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.card-button:hover {
+    background: linear-gradient(to right, #6d28d9, #5b21b6); /* Gradiente roxo mais escuro */
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(124, 58, 237, 0.4);
+}
+
+.card-icon {
+    font-size: 1.5rem;
+    color: #a78bfa; /* Roxo claro */
+    opacity: 0.9;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.card:hover .card-icon {
+    transform: translateX(5px);
+    color: #c4b5fd; /* Roxo mais claro */
+    opacity: 1;
+}
+.difficulty-container{
+    display: flex;
 }

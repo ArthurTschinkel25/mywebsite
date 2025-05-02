@@ -8,7 +8,8 @@
   <link rel="stylesheet" href="/assets/css/flagStyle.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Poppins:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Pixelify+Sans:wght@400..700&family=Poppins:wght@500&display=swap" rel="stylesheet">
+  <!-- Adicione esta linha para os ícones do Material -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/feather-icons/dist/feather.min.css">
 </head>
@@ -43,35 +44,89 @@
 
 {% if showGame %}
 <div class="flag-container" id="flag-game">
-  <h2>Escolha a bandeira correta! (Dificuldade: {{ selectedDifficulty }})</h2>
-  <h2>{{correctFlag.nome}}</h2>
+  <h2>Escolha a bandeira correta!</h2>
+  <div class="difficulty-container">
+    <h2 style="color: #9a9a9a">Dificuldade Selecionada -
+      <span style="
+        text-transform: capitalize;
+        {% if selectedDifficulty == 'facil' %}
+        color: #14bd6f;
+        {% elseif selectedDifficulty == 'medio' %}color: #0d6efd;
+        {% elseif selectedDifficulty == 'dificil' %}color: #ffc107;
+        {% else %}color: #dc3545;{% endif %}
+      ">
+        {% if selectedDifficulty == 'facil' %}
+          Fácil
+        {% elseif selectedDifficulty == 'medio' %}
+          Médio
+        {% elseif selectedDifficulty == 'dificil' %}
+          Difícil
+        {% else %}
+          Impossível
+        {% endif %}
+      </span>
 
+    </h2>
+  </div>
+  </h2>
+  <h2>{{correctFlag.nome}}</h2>
   <div class="container-bandeiras" style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px;">
     {% for flag in flags %}
     <button onclick="checkAnswer('{{ flag.nome }}', '{{ correctFlag.nome }}')" style="border: none; background: none;">
-        <img src="{{ flag.bandeiraPng }}" alt="Bandeira" style="width: 200px; height: 120px;">
+      <img  class="flag" src="{{ flag.bandeiraPng }}" alt="Bandeira">
     </button>
     {% endfor %}
   </div>
 </div>
 {% endif %}
+{% if exibirFimDeJogo %}
+<div class="cards-container">
+  <div class="card" data-rotation-factor="2">
+    <div class="card-content">
+      <h2>Fim de Jogo!</h2>
+      <h3>{{ totalCorretas }}</h3>
+      <p>Você pode ver os detalhes da sua pontuação abaixo</p>
+      <p style="margin-left: 35px; font-size: 21px">↓</p>
+      <div class="card-footer">
+        <button class="card-button">Ver Score</button>
+      </div>
+    </div>%
+  </div>
+  {% endif %}
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-  function fbuscar(botaoClicado) {
-    var dificuldadeEscolhida = botaoClicado.id;
-    window.location.href = '/bandeiras?dificuldade=' + dificuldadeEscolhida;
-  }
-
-  function checkAnswer(selected, correct) {
-    if (selected === correct) {
-      alert('Parabéns! Você acertou!');
-      setTimeout(() => location.reload(), 1000);
-    } else {
-      alert('Ops! Tente novamente.');
+  <script>
+    function fbuscar(botaoClicado) {
+      const dificuldadeEscolhida = botaoClicado.id;
+      window.location.href = '/bandeiras?dificuldade=' + dificuldadeEscolhida;
     }
-  }
-</script>
+
+    function checkAnswer(selected, correct) {
+      var totalCorretas = 0;
+      var totalIncorretas = 0;
+      if (selected === correct) {
+        alert('Parabéns! Você acertou!');
+        totalCorretas++;
+      } else {
+        alert('Ops! Errou!');
+        totalIncorretas++
+      }
+      fetch('FlagController.php',{
+        method: 'POST',
+        headers: {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: 'totalCorretas' // ou use URLSearchParams
+        }
+      })
+
+
+      setTimeout(() => {
+        window.location.href = '/bandeiras';
+      }, 1000);
+    }
+
+
+  </script>

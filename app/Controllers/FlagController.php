@@ -22,7 +22,7 @@ class FlagController
         $difficulty = $_GET['dificuldade'] ?? null;
         $exibirFimDejogo = false;
 
-        // Inicializa a quantidade de jogos se não existir
+        // Inicializa as variáveis de sessão se não existirem
         if (!isset($_SESSION['quantidadeDeJogos'])) {
             $_SESSION['quantidadeDeJogos'] = 0;
         }
@@ -47,8 +47,9 @@ class FlagController
             $exibirFimDejogo = true;
             $totalCorretas = $_SESSION['quantidadeCorretas'];
             $this->renderizarFimDeJogo($exibirFimDejogo, $totalCorretas);
-            // Reseta o contador após exibir a mensagem
+            // Reseta os contadores após exibir a mensagem
             $_SESSION['quantidadeDeJogos'] = 0;
+            $_SESSION['quantidadeCorretas'] = 0;
             return;
         }
 
@@ -59,8 +60,9 @@ class FlagController
         ]);
     }
 
-    private function atualizarPlacar(bool $acertou)
+    public function salvarPontuacao(bool $acertou)
     {
+        session_start();
         if (!isset($_SESSION['quantidadeCorretas'])) {
             $_SESSION['quantidadeCorretas'] = 0;
         }
@@ -69,10 +71,12 @@ class FlagController
             $_SESSION['quantidadeCorretas']++;
         }
     }
+
     private function iniciarNovoJogo(string $difficulty, string $jsonPath)
     {
-        $_SESSION['quantidadeDeJogos'] = 0; // Resetar contador ao iniciar novo jogo
+        $_SESSION['quantidadeDeJogos'] = 0;
         $_SESSION['selectedDifficulty'] = $difficulty;
+        $_SESSION['quantidadeCorretas'] = 0;
 
         $this->sortearNovaRodada($jsonPath, $difficulty);
 
@@ -88,7 +92,7 @@ class FlagController
             'correctFlag' => $_SESSION['correctFlag'],
             'selectedDifficulty' => $_SESSION['selectedDifficulty'],
             'showGame' => true,
-            'exibirFimDeJogo' => false // Garante que não mostra mensagem de fim de jogo
+            'exibirFimDeJogo' => false
         ]);
 
         // Incrementa o contador após renderizar
@@ -112,15 +116,13 @@ class FlagController
         $_SESSION['correctFlag'] = $correctFlag;
     }
 
-    private function renderizarFimDeJogo(bool $exibirFimDeJogo, string $totalCorretas)
+    private function renderizarFimDeJogo(bool $exibirFimDeJogo, int $totalCorretas)
     {
-        $_SESSION['totalCorretas'] = $totalCorretas;
-
         echo $this->twig->render('bandeiras/tableBandeiras.html', [
             'showGame' => false,
             'totalCorretas' => $totalCorretas,
             'exibirFimDeJogo' => $exibirFimDeJogo,
-            'mensagem' => 'Você já jogou 3 vezes! Atualize a página para reiniciar.'
+            'mensagem' => 'Você acertou ' . $totalCorretas . ' de 3 bandeiras! Atualize a página para reiniciar.'
         ]);
     }
 

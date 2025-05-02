@@ -84,7 +84,7 @@
   <div class="card" data-rotation-factor="2">
     <div class="card-content">
       <h2>Fim de Jogo!</h2>
-      <h3>{{ totalCorretas }}</h3>
+      <h3>{{ totalCorretas }}/3</h3>
       <p>Você pode ver os detalhes da sua pontuação abaixo</p>
       <p style="margin-left: 35px; font-size: 21px">↓</p>
       <div class="card-footer">
@@ -95,33 +95,31 @@
   {% endif %}
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
   <script>
     function fbuscar(botaoClicado) {
       const dificuldadeEscolhida = botaoClicado.id;
       window.location.href = '/bandeiras?dificuldade=' + dificuldadeEscolhida;
     }
 
+    // JavaScript ajustado
     function checkAnswer(selected, correct) {
-      var totalCorretas = 0;
-      var totalIncorretas = 0;
-      if (selected === correct) {
+      if (selected == correct){
+        var acertou = true;
+      }
+
+      if (acertou) {
         alert('Parabéns! Você acertou!');
-        totalCorretas++;
       } else {
         alert('Ops! Errou!');
-        totalIncorretas++
       }
-      fetch('FlagController.php',{
+
+      fetch('/salvar-pontuacao', {
         method: 'POST',
         headers: {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: 'totalCorretas' // ou use URLSearchParams
-        }
-      })
-
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'acertou=' + acertou
+      });
 
       setTimeout(() => {
         window.location.href = '/bandeiras';

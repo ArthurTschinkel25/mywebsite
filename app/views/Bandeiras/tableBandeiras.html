@@ -12,6 +12,8 @@
   <!-- Adicione esta linha para os ícones do Material -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/feather-icons/dist/feather.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 </head>
 <body>
 <nav class="navbar-system navbar navbar-expand-lg" style="background: linear-gradient(to right, #3a2cb2, #5e4ae3); padding: 1rem 2rem;">
@@ -70,14 +72,15 @@
   </div>
   </h2>
   <h2>{{correctFlag.nome}}</h2>
-  <div class="container-bandeiras" style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px;">
+  <div class="container-bandeiras">
     {% for flag in flags %}
-    <button onclick="checkAnswer('{{ flag.nome }}', '{{ correctFlag.nome }}')" style="border: none; background: none;">
-      <img  class="flag" src="{{ flag.bandeiraPng }}" alt="Bandeira">
-    </button>
+    <div class="flag-wrapper" id="flag-{{ loop.index }}">
+      <button onclick="checkAnswer('{{ flag.nome }}', '{{ correctFlag.nome }}', {{ loop.index }})" style="border: none; background: none;">
+        <img class="flag" src="{{ flag.bandeiraPng }}" alt="Bandeira">
+      </button>
+    </div>
     {% endfor %}
   </div>
-</div>
 {% endif %}
 {% if exibirFimDeJogo %}
 <div class="cards-container">
@@ -102,29 +105,59 @@
     }
 
     // JavaScript ajustado
-    function checkAnswer(selected, correct) {
-      if (selected == correct){
-        var acertou = true;
+    function checkAnswer(selected, correct, flagIndex) {
+      const flagWrapper = document.getElementById(`flag-${flagIndex}`);
+      const flagImg = flagWrapper.querySelector('.flag');
+      const isCorrect = selected === correct;
+
+      // Adicionar classe 'selected' apenas na bandeira clicada
+      flagImg.classList.add('selected');
+
+      // Criar ícone de feedback
+      const icon = document.createElement('span');
+      icon.className = `feedback-icon material-icons ${isCorrect ? 'correct-icon' : 'wrong-icon'}`;
+      icon.textContent = isCorrect ? 'check_circle' : 'cancel';
+
+      // Adicionar ícone ao wrapper da bandeira
+      flagWrapper.appendChild(icon);
+
+      // Desabilitar todos os botões após seleção
+      const allButtons = document.querySelectorAll('.flag-wrapper button');
+      allButtons.forEach(button => {
+        button.disabled = true;
+      });
+
+      // Se errou, destacar a bandeira correta (abordagem melhorada)
+      if (!isCorrect) {
+        // Encontrar todas as bandeiras
+        const allFlags = document.querySelectorAll('.flag-wrapper');
+
+        // Procurar pela bandeira que tem o nome correto
+        allFlags.forEach(wrapper => {
+          const button = wrapper.querySelector('button');
+          // Extrair o primeiro parâmetro do onclick (nome da bandeira)
+          const onclickContent = button.getAttribute('onclick');
+          const match = onclickContent.match(/checkAnswer\('(.*?)',/);
+
+          if (match && match[1] === correct) {
+            wrapper.querySelector('.flag').classList.add('correct-highlight');
+          }
+        });
       }
 
-      if (acertou) {
-        alert('Parabéns! Você acertou!');
-      } else {
-        alert('Ops! Errou!');
-      }
-
+      // Enviar resultado para o servidor
       fetch('/salvar-pontuacao', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: 'acertou=' + acertou
+        body: 'acertou=' + isCorrect
       });
 
+      // Redirecionar após 1.5 segundos (tempo da animação)
       setTimeout(() => {
         window.location.href = '/bandeiras';
-      }, 1000);
+      }, 1500);
     }
-
 
   </script>

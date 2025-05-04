@@ -29,6 +29,9 @@ class FlagController
         if (!isset($_SESSION['quantidadeCorretas'])) {
             $_SESSION['quantidadeCorretas'] = 0;
         }
+        if (!isset($_SESSION['rodadaAtual'])) {
+            $_SESSION['rodadaAtual'] = 0;
+        }
 
         // Quando o usuário escolhe uma dificuldade
         if ($difficulty) {
@@ -86,13 +89,16 @@ class FlagController
 
     private function jogarRodada(string $jsonPath)
     {
+        $_SESSION['rodadaAtual']++;
+
         // Renderiza o jogo atual antes de incrementar o contador
         echo $this->twig->render('bandeiras/tableBandeiras.html', [
             'flags' => $_SESSION['flags'],
             'correctFlag' => $_SESSION['correctFlag'],
             'selectedDifficulty' => $_SESSION['selectedDifficulty'],
             'showGame' => true,
-            'exibirFimDeJogo' => false
+            'exibirFimDeJogo' => false,
+            'rodadaAtual' => $_SESSION['rodadaAtual']
         ]);
 
         // Incrementa o contador após renderizar
@@ -122,7 +128,7 @@ class FlagController
             'showGame' => false,
             'totalCorretas' => $totalCorretas,
             'exibirFimDeJogo' => $exibirFimDeJogo,
-            'mensagem' => 'Você acertou ' . $totalCorretas . ' de 3 bandeiras! Atualize a página para reiniciar.'
+            'mensagem' => 'Você acertou ' . $totalCorretas . ' de 3 bandeiras! Atualize a página para reiniciar.',
         ]);
     }
 
@@ -133,6 +139,6 @@ class FlagController
 
     private function limparDadosDeRodada()
     {
-        unset($_SESSION['flags'], $_SESSION['correctFlag'], $_SESSION['selectedDifficulty']);
+        unset($_SESSION['flags'], $_SESSION['correctFlag'], $_SESSION['selectedDifficulty'], $_SESSION['rodadaAtual']);
     }
 }
